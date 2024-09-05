@@ -1,7 +1,7 @@
 {
   "name": "javascript--spidermonkey--run-button",
   "displayName": "JavaScript (SpiderMonkey) Run Button",
-  "description": "Adds a run button to the top right of a .js editor.  This is similar to, but more basic, then the python extensions run button.",
+  "description": "Adds a run button to the top right of a .js editor.  This is similar to, but more basic, then the python extension's run button.",
   "version": "0.0.1",
   "engines": {
     "vscode": "^1.93.0"
@@ -9,13 +9,15 @@
   "categories": [
     "Other"
   ],
-  "activationEvents": [],
+  "activationEvents": [
+    "onLanguage:javascript"
+  ],
   "main": "./dist/extension.js",
   "contributes": {
     "commands": [
       {
         "command": "javascript--spidermonkey--run-button.run",
-        "title": "Run JavaScript (SpiderMonkey)",
+        "title": "Run This File Using JavaScript (SpiderMonkey)",
         "icon": "$(run)"
       }
     ],

@@ -4,7 +4,7 @@
   "description": "Adds a run button to the top right of a .js editor.  This is similar to, but more basic, then the python extension's run button.",
   "version": "0.0.1",
   "engines": {
-    "vscode": "^1.93.0"
+    "vscode": "^1.91.0"
   },
   "categories": [
     "Other"

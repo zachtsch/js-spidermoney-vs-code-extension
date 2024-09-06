@@ -16,7 +16,7 @@
             terminal.show();
             setTimeout(() => {
                 terminal!.sendText(`js "${filePath}"`);  // Assuming 'js' is the command for running SpiderMonkey
-            }, 300);  // Delay in milliseconds (adjust if needed)
+            }, 500);  // Delay in milliseconds (adjust if needed)
         }else{
             terminal.show();
             terminal.sendText(`js "${filePath}"`);  // For example, if you are running *.js files

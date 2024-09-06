@@ -3,8 +3,12 @@
   "displayName": "JavaScript (SpiderMonkey) Run Button",
   "description": "Adds a run button to the top right of a .js editor.  This is similar to, but more basic, then the python extension's run button.",
   "version": "0.0.1",
+  "publisher": "EasierTeaching",
   "engines": {
     "vscode": "^1.91.0"
+  },
+  "repository": {
+    "url": "https://github.com/zachtsch/js-spidermoney-vs-code-extension.git"
   },
   "categories": [
     "Other"
@@ -43,7 +47,7 @@
     "test": "vscode-test"
   },
   "devDependencies": {
-    "@types/vscode": "^1.93.0",
+    "@types/vscode": "^1.91.0",
     "@types/mocha": "^10.0.7",
     "@types/node": "20.x",
     "@typescript-eslint/eslint-plugin": "^8.3.0",

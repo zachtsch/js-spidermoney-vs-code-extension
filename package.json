@@ -1,64 +1,74 @@
 {
-  "name": "javascript--spidermonkey--run-button",
-  "displayName": "JavaScript (SpiderMonkey) Run Button",
-  "description": "Adds a run button to the top right of a .js editor.  This is similar to, but more basic, then the python extension's run button.",
-  "icon": "./images/VS_Code_Extension_Icon_128x128.png",
-  "version": "0.0.15",
-  "publisher": "EasierTeaching",
-  "engines": {
-    "vscode": "^1.91.0"
-  },
-  "repository": {
-    "url": "https://github.com/zachtsch/zachtools.git"
-  },
-  "categories": [
-    "Other"
-  ],
-  "activationEvents": [
-    "onLanguage:javascript" 
-  ],
-  "main": "./dist/extension.js",
-  "contributes": {
-    "commands": [
-      {
-        "command": "javascript--spidermonkey--run-button.run",
-        "title": "Run This File Using JavaScript (SpiderMonkey)",
-        "icon": "$(run)"
-      }
+    "name": "javascript--spidermonkey--run-button",
+    "displayName": "JavaScript (SpiderMonkey) Run Button",
+    "description": "Adds a run button to the top right of a .js editor.  This is similar to, but more basic, then the python extension's run button.",
+    "icon": "./images/VS_Code_Extension_Icon_128x128.png",
+    "version": "0.0.17",
+    "publisher": "EasierTeaching",
+    "engines": {
+      "vscode": "^1.91.0"
+    },
+    "repository": {
+      "url": "https://github.com/zachtsch/zachtools.git"
+    },
+    "categories": [
+      "Other"
     ],
-    "menus": {
+    "activationEvents": [
+      "onLanguage:javascript"
+    ],
+    "main": "./dist/extension.js",
+    "contributes": {
+      "commands": [
+        {
+          "command": "javascript--spidermonkey--run-button.run",
+          "title": "Run This File Using JavaScript (SpiderMonkey)",
+          "icon": "$(run)"
+        },{
+          "command": "javascript--spidermonkey--run-button.windows-install",
+          "title": "Windows Setup SpiderMonkey"
+        }
+      ],
+      "menus": {
         "editor/title": [
-            {
-                "command": "javascript--spidermonkey--run-button.run",
-                "group": "navigation",
-                "when": "editorLangId == javascript"
-            }
+          {
+            "command": "javascript--spidermonkey--run-button.run",
+            "group": "navigation",
+            "when": "editorLangId == javascript"
+          }
         ]
+      }
+    },
+    "scripts": {
+      "vscode:prepublish": "npm run package",
+      "compile": "webpack",
+      "watch": "webpack --watch",
+      "package": "webpack --mode production --devtool hidden-source-map",
+      "compile-tests": "tsc -p . --outDir out",
+      "watch-tests": "tsc -p . -w --outDir out",
+      "pretest": "npm run compile-tests && npm run compile && npm run lint",
+      "lint": "eslint src",
+      "test": "vscode-test"
+    },
+    "devDependencies": {
+      "@types/adm-zip": "^0.5.5",
+      "@types/fs-extra": "^11.0.4",
+      "@types/mocha": "^10.0.7",
+      "@types/node": "20.x",
+      "@types/vscode": "^1.91.0",
+      "@typescript-eslint/eslint-plugin": "^8.3.0",
+      "@typescript-eslint/parser": "^8.3.0",
+      "@vscode/test-cli": "^0.0.10",
+      "@vscode/test-electron": "^2.4.1",
+      "eslint": "^9.9.1",
+      "ts-loader": "^9.5.1",
+      "typescript": "^5.5.4",
+      "webpack": "^5.94.0",
+      "webpack-cli": "^5.1.4"
+    },
+    "dependencies": {
+      "adm-zip": "^0.5.16",
+      "fs-extra": "^11.2.0"
     }
-  },
-  "scripts": {
-    "vscode:prepublish": "npm run package",
-    "compile": "webpack",
-    "watch": "webpack --watch",
-    "package": "webpack --mode production --devtool hidden-source-map",
-    "compile-tests": "tsc -p . --outDir out",
-    "watch-tests": "tsc -p . -w --outDir out",
-    "pretest": "npm run compile-tests && npm run compile && npm run lint",
-    "lint": "eslint src",
-    "test": "vscode-test"
-  },
-  "devDependencies": {
-    "@types/vscode": "^1.91.0",
-    "@types/mocha": "^10.0.7",
-    "@types/node": "20.x",
-    "@typescript-eslint/eslint-plugin": "^8.3.0",
-    "@typescript-eslint/parser": "^8.3.0",
-    "eslint": "^9.9.1",
-    "typescript": "^5.5.4",
-    "ts-loader": "^9.5.1",
-    "webpack": "^5.94.0",
-    "webpack-cli": "^5.1.4",
-    "@vscode/test-cli": "^0.0.10",
-    "@vscode/test-electron": "^2.4.1"
   }
-}
+  

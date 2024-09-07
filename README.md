@@ -5,3 +5,6 @@ This is a simple extension that adds a play/run button to the top right of the e
 ## Requirements
 This extension requires the SpiderMonkey JavaScript engine to be installed on your system and on the path. 
 Maybe someday I'll add a feature that downloads and install it, but for now it just assumes it's on the path.
+
+# github
+https://github.com/zachtsch/js-spidermoney-vs-code-extension

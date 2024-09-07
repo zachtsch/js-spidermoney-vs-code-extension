@@ -83,25 +83,24 @@ function downloadFile(url: string, dest: string): Promise<void> {
 }
 
 function addToPath(dir: string) {
-    const powershellCommand = `
-    [System.Environment]::GetEnvironmentVariable('Path', 'User') -split ';' | ForEach-Object { 
-        if ($_ -eq '${SPIDERMONKEY_PATH}') { $found = $true }
+    if (!(process.env.PATH||'').includes(SPIDERMONKEY_PATH)) {
+        // Use PowerShell to persistently add the directory to the user PATH
+        const command = `setx PATH "$Env:PATH;${SPIDERMONKEY_PATH}"`;
+    
+        exec(`powershell -Command "${command}"`, (error, stdout, stderr) => {
+            if (error) {
+                console.error(`Error: ${error.message}`);
+                return;
+            }
+            if (stderr) {
+                console.error(`Error: ${stderr}`);
+                return;
+            }
+            console.log(`Success: ${stdout}`);
+        });
+    } else {
+        console.log('Directory already exists in PATH');
     }
-    if (-not $found) {
-        [System.Environment]::SetEnvironmentVariable('Path', [System.Environment]::GetEnvironmentVariable('Path', 'User') + ';${SPIDERMONKEY_PATH}', 'User')
-    }`;
-
-    exec(`powershell -Command "${powershellCommand}"`, (error, stdout, stderr) => {
-    if (error) {
-        console.error(`Error: ${error.message}`);
-        return;
-    }
-    if (stderr) {
-        console.error(`stderr: ${stderr}`);
-        return;
-    }
-    console.log(`stdout: ${stdout}`);
-    });
 }
 
 

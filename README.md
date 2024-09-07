@@ -10,8 +10,13 @@ https://github.com/zachtsch/js-spidermoney-vs-code-extension
 
 # Install and Setup Spidermonkey
 
+This command will install SpiderMonkey on your system and add it to your path.  It behaves differently depending on your operating system.
+
 ## Windows
 Downloads jsshell-win64.zip from https://archive.mozilla.org/pub/firefox/nightly/latest-mozilla-central/ and unzips it in C:\spidermonkey.  Then adds C:\spidermonkey to your path.
 
 ## Mac
 Installs Homebrew, adds `brew` to your path and then runs `brew install spidermonkey`.  Requires your password.
+
+## Linux
+Unsupported at this time. Please install SpiderMonkey manually. 

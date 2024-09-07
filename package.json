@@ -1,7 +1,7 @@
 {
     "name": "javascript--spidermonkey--run-button",
     "displayName": "JavaScript (SpiderMonkey) Run Button",
-    "description": "Adds a run button to the top right of a .js editor.  This is similar to, but more basic, then the python extension's run button.  Also added a command palette command: Install and Setup Spidermonkey.  I believe this works on Windows and Macs.  This install homebrew on Macs"  ,
+    "description": "Adds a run button to the top right of a .js editor.  This is similar to, but more basic, then the python extension's run button.  Also added a command palette command: Install and Setup Spidermonkey.  This install Homebrew on Macs"  ,
     "icon": "./images/VS_Code_Extension_Icon_128x128.png",
     "version": "0.0.289",
     "publisher": "EasierTeaching",

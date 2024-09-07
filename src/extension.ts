@@ -83,10 +83,16 @@ function downloadFile(url: string, dest: string): Promise<void> {
 }
 
 function addToPath(dir: string) {
-    if (!(process.env.PATH||'').includes(SPIDERMONKEY_PATH)) {
-        // Use PowerShell to persistently add the directory to the user PATH
-        const command = `setx PATH "$Env:PATH;${SPIDERMONKEY_PATH}"`;
+    console.log('addToPath');
+    let p = process.env.PATH||'';
+    console.log('p',p);
     
+    if (!p.includes(SPIDERMONKEY_PATH)) {
+        // Use PowerShell to persistently add the directory to the user PATH
+        // const command = `setx PATH "$($Env:PATH + ';${SPIDERMONKEY_PATH}')"`;
+        const command = `setx PATH '${SPIDERMONKEY_PATH};${p}'`;
+        
+        console.log('command',command)
         exec(`powershell -Command "${command}"`, (error, stdout, stderr) => {
             if (error) {
                 console.error(`Error: ${error.message}`);
@@ -102,6 +108,7 @@ function addToPath(dir: string) {
         console.log('Directory already exists in PATH');
     }
 }
+
 
 
 

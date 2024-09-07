@@ -52,6 +52,7 @@ async function setupSpiderMonkeyOnMac() {
         //   vscode.window.showInformationMessage('Homebrew installation started. Check the terminal for progress.');
   
         } else {
+          terminal.show(true);
           vscode.window.showInformationMessage('Homebrew is already installed! Attempting to install spidermonkey');
           terminal.sendText('brew install spidermonkey');
         }

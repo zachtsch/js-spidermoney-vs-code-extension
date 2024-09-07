@@ -33,63 +33,58 @@ async function setupSpiderMonkeyOnWin() {
 }
 
 async function setupSpiderMonkeyOnMac() {
-    if (os.platform() !== 'darwin') {
-        vscode.window.showErrorMessage('This setup is only for macOS.');
-        return;
-    }
-
-    try {
-        // Step 1: Check if Homebrew is installed
-        if (!isHomebrewInstalled()) {
-            await installHomebrew();
+    const terminal = vscode.window.createTerminal("Homebrew Installation");
+    exec('brew -v', (error, stdout, stderr) => {
+        // console.log('error',error,'stdout',stdout,'stderr',stderr)
+        if (error) {
+        //   vscode.window.showWarningMessage('Homebrew is not installed. Installing now...');
+  
+          // Show terminal and run Homebrew installation script
+          terminal.show(true); // Show the terminal window
+  
+          // Run the installation script inside the terminal
+          terminal.sendText('/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)";eval "$(/opt/homebrew/bin/brew shellenv)";brew install spidermonkey');
+  
+        //   exec('js -v', (e,s,t)=>{
+            // console.log('e',e,'s',s,'t',t);
+        //   });
+        //   vscode.window.showInformationMessage('Homebrew installation started. Check the terminal for progress.');
+  
         } else {
-            vscode.window.showInformationMessage('Homebrew is already installed.');
+          vscode.window.showInformationMessage('Homebrew is already installed!');
         }
-
-        // Step 2: Install SpiderMonkey
-        installSpiderMonkey();
-        vscode.window.showInformationMessage('SpiderMonkey successfully installed via Homebrew!');
-
-    } catch (error) {
-        if (error instanceof Error) {
-            vscode.window.showErrorMessage(`Error setting up SpiderMonkey: ${error.message}`);
-        } else {
-            vscode.window.showErrorMessage(`Unknown error occurred: ${error}`);
-        }
-    }
+      });
 }
 
-function isHomebrewInstalled(): boolean {
-    try {
-        execSync('brew --version', { stdio: 'ignore' });  // Try running brew
-        return true;
-    } catch (error) {
-        return false;
-    }
-}
-// Helper function to install SpiderMonkey
-function installSpiderMonkey(): void {
-    vscode.window.showInformationMessage('Installing SpiderMonkey...');
-    execSync('brew install spidermonkey', { stdio: 'inherit' });
-}
 
-// Helper function to install Homebrew
-async function installHomebrew(): Promise<void> {
-    vscode.window.showInformationMessage('Homebrew not found. Installing Homebrew...');
-    return new Promise((resolve, reject) => {
-        exec(
-            '/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"',
-            (error, stdout, stderr) => {
-                if (error) {
-                    reject(new Error(`Failed to install Homebrew: ${stderr}`));
-                } else {
-                    vscode.window.showInformationMessage('Homebrew installed successfully.');
-                    resolve();
-                }
-            }
-        );
-    });
-}
+// function isHomebrewInstalled(): boolean {
+//     try {
+//         execSync('brew --version', { stdio: 'ignore' });  // Try running brew
+//         return true;
+//     } catch (error) {
+//         return false;
+//     }
+// }
+// // Helper function to install SpiderMonkey
+// function installSpiderMonkey(): void {
+//     vscode.window.showInformationMessage('Installing SpiderMonkey...');
+//     execSync('brew install spidermonkey', { stdio: 'inherit' });
+// }
+
+// function installHomebrew() {
+//     // The command to install Homebrew without using sudo
+//     console.log('made it');
+//     const command = `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"`;
+
+//     let terminal = vscode.window.activeTerminal;
+//     if (!terminal) {
+//         terminal = vscode.window.createTerminal(`Homebrew Install`);
+//         terminal.show();
+//         //setTimeout(() => {
+//         terminal!.sendText(`${command}`); 
+//     }
+
+// }
 
 
 function downloadFile(url: string, dest: string): Promise<void> {
@@ -131,47 +126,51 @@ export function activate(context: vscode.ExtensionContext) {
         const editor = vscode.window.activeTextEditor;
 
         if (editor) {
-        const document = editor.document;
-        const filePath = document.fileName;
+            const document = editor.document;
+            const filePath = document.fileName;
 
-        // Get the current terminal or create a new one if none exists
-        let terminal = vscode.window.activeTerminal;
-        if (!terminal) {
-            terminal = vscode.window.createTerminal(`Run: ${filePath}`);
-            terminal.show();
-            //setTimeout(() => {
-            terminal!.sendText(`clear\r\njs "${filePath}"`);  // Assuming 'js' is the command for running SpiderMonkey
-            //}, 500);  // Delay in milliseconds (adjust if needed)
-        }else{
-            terminal.show();
-            terminal.sendText(`js "${filePath}"`);  // For example, if you are running *.js files
+            // Get the current terminal or create a new one if none exists
+            let terminal = vscode.window.activeTerminal;
+            if (!terminal) {
+                terminal = vscode.window.createTerminal(`Run: ${filePath}`);
+                terminal.show();
+                //setTimeout(() => {
+                terminal!.sendText(`clear\r\njs "${filePath}"`);  // Assuming 'js' is the command for running SpiderMonkey
+                //}, 500);  // Delay in milliseconds (adjust if needed)
+            }else{
+                terminal.show();
+                terminal.sendText(`js "${filePath}"`);  // For example, if you are running *.js files
+            }
+        }
+    });
+
+
+    // Focus on the terminal and run the file
+    let dlAndPath = vscode.commands.registerCommand('javascript--spidermonkey--run-button.install', async () => {
+        if (os.platform() !== 'win32' && os.platform() !== 'darwin') {
+            vscode.window.showErrorMessage('This setup is only for Windows and Mac.');
+            return;
         }
 
-        // Focus on the terminal and run the file
-        let dlAndPath = vscode.commands.registerCommand('javascript--spidermonkey--run-button.install', async () => {
-            if (os.platform() !== 'win32' && os.platform() !== 'darwin') {
-                vscode.window.showErrorMessage('This setup is only for Windows and Mac.');
-                return;
+        try {
+            if(os.platform() === 'win32') await winInstall();
+            else if(os.platform() === 'darwin') await macInstall();
+            // vscode.window.showInformationMessage('SpiderMonkey successfully installed and added to PATH!');
+        } catch (error : unknown) {
+            if(error instanceof Error){
+                vscode.window.showErrorMessage(`Error setting up SpiderMonkey: ${error.message}`);
+            }else{
+                vscode.window.showErrorMessage(`Unknown error occured: ${error}`);
+
             }
-    
-            try {
-                if(os.platform() === 'win32') await winInstall();
-                else if(os.platform() == 'darwin') await macInstall();
-                vscode.window.showInformationMessage('SpiderMonkey successfully installed and added to PATH!');
-            } catch (error : unknown) {
-                if(error instanceof Error){
-                    vscode.window.showErrorMessage(`Error setting up SpiderMonkey: ${error.message}`);
-                }else{
-                    vscode.window.showErrorMessage(`Unknown error occured: ${error}`);
-    
-                }
-            }
-        });
-    
-        context.subscriptions.push(disposable);
+        }
+    });
+
+    context.subscriptions.push(disposable);
+    context.subscriptions.push(dlAndPath);
         
-        }
-});
+}
+
 
 async function winInstall(){
     try {
@@ -190,7 +189,7 @@ async function winInstall(){
 async function macInstall(){
     try {
         await setupSpiderMonkeyOnMac();
-        vscode.window.showInformationMessage('SpiderMonkey successfully installed and added to PATH!');
+        // vscode.window.showInformationMessage('SpiderMonkey successfully installed and added to PATH!');
     } catch (error : unknown) {
         if(error instanceof Error){
             vscode.window.showErrorMessage(`Error setting up SpiderMonkey: ${error.message}`);
@@ -204,6 +203,6 @@ async function macInstall(){
     
     // context.subscriptions.push(dlAndPath);
 
-}
+
 
 export function deactivate() {}

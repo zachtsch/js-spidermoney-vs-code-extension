@@ -59,34 +59,7 @@ async function setupSpiderMonkeyOnMac() {
 }
 
 
-// function isHomebrewInstalled(): boolean {
-//     try {
-//         execSync('brew --version', { stdio: 'ignore' });  // Try running brew
-//         return true;
-//     } catch (error) {
-//         return false;
-//     }
-// }
-// // Helper function to install SpiderMonkey
-// function installSpiderMonkey(): void {
-//     vscode.window.showInformationMessage('Installing SpiderMonkey...');
-//     execSync('brew install spidermonkey', { stdio: 'inherit' });
-// }
 
-// function installHomebrew() {
-//     // The command to install Homebrew without using sudo
-//     console.log('made it');
-//     const command = `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"`;
-
-//     let terminal = vscode.window.activeTerminal;
-//     if (!terminal) {
-//         terminal = vscode.window.createTerminal(`Homebrew Install`);
-//         terminal.show();
-//         //setTimeout(() => {
-//         terminal!.sendText(`${command}`); 
-//     }
-
-// }
 
 
 function downloadFile(url: string, dest: string): Promise<void> {
@@ -109,15 +82,25 @@ function downloadFile(url: string, dest: string): Promise<void> {
 }
 
 function addToPath(dir: string) {
-    const systemPath = process.env.PATH || '';
-    
-    if (!systemPath.includes(dir)) {
-        const newPath = `${dir};${systemPath}`;
-        
-        // Update the system PATH (using PowerShell command to permanently set it)
-        const psCommand = `setx PATH "${newPath}"`;
-        child_process.execSync(psCommand, { shell: 'powershell.exe' });
+    const powershellCommand = `
+    [System.Environment]::GetEnvironmentVariable('Path', 'User') -split ';' | ForEach-Object { 
+        if ($_ -eq '${SPIDERMONKEY_PATH}') { $found = $true }
     }
+    if (-not $found) {
+        [System.Environment]::SetEnvironmentVariable('Path', [System.Environment]::GetEnvironmentVariable('Path', 'User') + ';${SPIDERMONKEY_PATH}', 'User')
+    }`;
+
+    exec(`powershell -Command "${powershellCommand}"`, (error, stdout, stderr) => {
+    if (error) {
+        console.error(`Error: ${error.message}`);
+        return;
+    }
+    if (stderr) {
+        console.error(`stderr: ${stderr}`);
+        return;
+    }
+    console.log(`stdout: ${stdout}`);
+    });
 }
 
 

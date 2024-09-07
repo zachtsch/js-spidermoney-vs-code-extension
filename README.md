@@ -15,6 +15,3 @@ Downloads jsshell-win64.zip from https://archive.mozilla.org/pub/firefox/nightly
 
 ## Mac
 Installs Homebrew, adds `brew` to your path and then runs `brew install spidermonkey`.  Requires your password.
-
-## Linux
-You're on your own as I trust you know how to install software via command line on your system.

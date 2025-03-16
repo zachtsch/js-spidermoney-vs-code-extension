@@ -15,7 +15,8 @@
         "Other"
     ],
     "activationEvents": [
-        "onLanguage:javascript"
+        "onLanguage:javascript",
+        "onLanguage:typescript"
     ],
     "main": "./dist/extension.js",
     "contributes": {
@@ -23,6 +24,11 @@
             {
                 "command": "javascript--spidermonkey--run-button.run",
                 "title": "Run This File Using JavaScript (SpiderMonkey)",
+                "icon": "$(run)"
+            },
+            {
+                "command": "javascript--spidermonkey--run-button.tsnode",
+                "title": "Run This File Using TypeScript (ts-node)",
                 "icon": "$(run)"
             },
             {
@@ -36,6 +42,11 @@
                     "command": "javascript--spidermonkey--run-button.run",
                     "group": "navigation",
                     "when": "editorLangId == javascript"
+                },
+                {
+                    "command": "javascript--spidermonkey--run-button.tsnode",
+                    "group": "navigation",
+                    "when": "editorLangId == typescript"
                 }
             ]
         }

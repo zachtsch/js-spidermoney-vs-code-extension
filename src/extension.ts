@@ -113,11 +113,12 @@ function addToPath(dir: string) {
 
 
 export function activate(context: vscode.ExtensionContext) {
-    let disposable = vscode.commands.registerCommand('javascript--spidermonkey--run-button.run', () => {
+    let disposable = vscode.commands.registerCommand('javascript--spidermonkey--run-button.run', async () => {
         // Get the active text editor
         const editor = vscode.window.activeTextEditor;
 
-        if (editor) {
+        if (editor) {   
+            await vscode.window.activeTextEditor?.document.save();
             const document = editor.document;
             const filePath = document.fileName;
 
@@ -136,11 +137,12 @@ export function activate(context: vscode.ExtensionContext) {
         }
     });
 
-    let disposable2 = vscode.commands.registerCommand('javascript--spidermonkey--run-button.tsnode', () => {
+    let disposable2 = vscode.commands.registerCommand('javascript--spidermonkey--run-button.tsnode', async () => {
         // Get the active text editor
         const editor = vscode.window.activeTextEditor;
 
         if (editor) {
+            await vscode.window.activeTextEditor?.document.save();
             const document = editor.document;
             const filePath = document.fileName;
 

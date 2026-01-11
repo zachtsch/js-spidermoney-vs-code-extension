@@ -118,9 +118,14 @@ export function activate(context: vscode.ExtensionContext) {
         const editor = vscode.window.activeTextEditor;
 
         if (editor) {   
-            await vscode.window.activeTextEditor?.document.save();
             const document = editor.document;
             const filePath = document.fileName;
+
+            if (document.isUntitled) {
+                vscode.window.showInformationMessage("Save the file as .js to enable Run");
+                return;
+            }
+            await vscode.window.activeTextEditor?.document.save();
 
             // Get the current terminal or create a new one if none exists
             let terminal = vscode.window.activeTerminal;
@@ -142,9 +147,14 @@ export function activate(context: vscode.ExtensionContext) {
         const editor = vscode.window.activeTextEditor;
 
         if (editor) {
-            await vscode.window.activeTextEditor?.document.save();
             const document = editor.document;
             const filePath = document.fileName;
+
+            if (document.isUntitled) {
+                vscode.window.showInformationMessage("Save the file as .ts to enable Run");
+                return;
+            }
+            await vscode.window.activeTextEditor?.document.save();
 
             // Get the current terminal or create a new one if none exists
             let terminal = vscode.window.activeTerminal;

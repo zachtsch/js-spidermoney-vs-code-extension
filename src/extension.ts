@@ -44,7 +44,7 @@ async function setupSpiderMonkeyOnMac() {
           terminal.show(true); // Show the terminal window
   
           // Run the installation script inside the terminal
-          terminal.sendText('clear;/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)";eval "$(/opt/homebrew/bin/brew shellenv)";brew install spidermonkey');
+          terminal.sendText('clear;/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" && eval "$(/opt/homebrew/bin/brew shellenv)" && brew install spidermonkey');
   
         //   exec('js -v', (e,s,t)=>{
             // console.log('e',e,'s',s,'t',t);

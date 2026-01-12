@@ -133,8 +133,8 @@ export function activate(context: vscode.ExtensionContext) {
                 terminal = vscode.window.createTerminal(`Run: ${filePath}`);
                 terminal.show();
                 //setTimeout(() => {
-                terminal!.sendText(`js "${filePath}"`);  // Assuming 'js' is the command for running SpiderMonkey
-                // terminal!.sendText(`clear\r\njs "${filePath}"`);  // Assuming 'js' is the command for running SpiderMonkey
+                // terminal!.sendText(`js "${filePath}"`);  // Assuming 'js' is the command for running SpiderMonkey
+                terminal!.sendText(`clear\r\njs "${filePath}"`);  // Assuming 'js' is the command for running SpiderMonkey
                 //}, 500);  // Delay in milliseconds (adjust if needed)
             }else{
                 terminal.show();
@@ -163,8 +163,8 @@ export function activate(context: vscode.ExtensionContext) {
                 terminal = vscode.window.createTerminal(`Run: ${filePath}`);
                 terminal.show();
                 //setTimeout(() => {
-                // terminal!.sendText(`clear\r\nts-node "${filePath}"`);  // Assuming 'js' is the command for running SpiderMonkey
-                terminal!.sendText(`ts-node "${filePath}"`);  // Assuming 'js' is the command for running SpiderMonkey
+                terminal!.sendText(`clear\r\nts-node "${filePath}"`);  // Assuming 'js' is the command for running SpiderMonkey
+                // terminal!.sendText(`ts-node "${filePath}"`);  // Assuming 'js' is the command for running SpiderMonkey
                 //}, 500);  // Delay in milliseconds (adjust if needed)
             }else{
                 terminal.show();;

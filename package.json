@@ -49,7 +49,13 @@
                     "when": "editorLangId == typescript"
                 }
             ]
-        }
+        },
+        "snippets": [
+            {
+                "language": "json",
+                "path": "./snippets/typescript.json"
+            }
+        ]
     },
     "scripts": {
         "vscode:prepublish": "npm run package",

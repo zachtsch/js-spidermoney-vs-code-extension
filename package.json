@@ -52,7 +52,7 @@
         },
         "snippets": [
             {
-                "language": "json",
+                "language": "jsonc",
                 "path": "./snippets/typescript.json"
             }
         ]

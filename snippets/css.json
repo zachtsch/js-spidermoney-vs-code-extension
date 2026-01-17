@@ -1,0 +1,21 @@
+{
+  "Full height flex center container": {
+    "prefix": "flexcenter",
+    "body": [
+      "html, body {",
+      "  height: 100%;",
+      "  margin: 0;",
+      "}",
+      "",
+      "",
+      ".container {",
+      "  height: 100vh;",
+      "  display: flex;",
+      "  align-items: center;",
+      "  justify-content: center;",
+      "  overflow: hidden;",
+      "}"
+    ],
+    "description": "Full-height page with centered flex container"
+  }
+}

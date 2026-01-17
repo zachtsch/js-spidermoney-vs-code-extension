@@ -54,6 +54,10 @@
             {
                 "language": "jsonc",
                 "path": "./snippets/typescript.json"
+            },
+            {
+                "language": "css",
+                "path": "./snippets/css.json"
             }
         ]
     },

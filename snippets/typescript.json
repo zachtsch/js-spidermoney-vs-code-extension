@@ -1,6 +1,6 @@
 {
   "Barebones tsconfig": {
-    "prefix": ["!", "tsconfig"],
+    "prefix": ["!", "tsconfig", "web"],
     "body": [
       "{",
       "  \"compilerOptions\": {",

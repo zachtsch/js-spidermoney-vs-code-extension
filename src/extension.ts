@@ -3,15 +3,14 @@ import * as https from 'https';
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import * as os from 'os';
-import * as child_process from 'child_process';
-import { exec, execSync } from 'child_process';
+import { exec, execFile } from 'child_process';
 import AdmZip from 'adm-zip';
 
 const SPIDERMONKEY_PATH = 'C:\\spidermonkey';
 const SPIDERMONKEY_URL = 'https://archive.mozilla.org/pub/firefox/nightly/latest-mozilla-central/jsshell-win64.zip';
 
 
-async function setupSpiderMonkeyOnWin() {
+async function setupSpiderMonkeyOnWin(): Promise<boolean> {
     // Step 1: Download the ZIP file
     const zipFilePath = path.join(os.tmpdir(), 'spidermonkey.zip');
     await downloadFile(SPIDERMONKEY_URL, zipFilePath);
@@ -26,15 +25,24 @@ async function setupSpiderMonkeyOnWin() {
     zip.extractAllTo(SPIDERMONKEY_PATH, true);
 
     // Step 3: Add to Windows PATH
-    addToPath(SPIDERMONKEY_PATH);
+    const pathWasUpdated = await addToPath(SPIDERMONKEY_PATH);
 
     // Clean up downloaded zip file
     await fs.remove(zipFilePath);
+
+    return pathWasUpdated;
 }
 
 async function setupSpiderMonkeyOnMac() {
     let terminal = vscode.window.activeTerminal;
-    if (!terminal) terminal = vscode.window.createTerminal("Homebrew Installation");
+    if (!terminal) {
+        terminal = vscode.window.createTerminal('Homebrew Installation');
+    }
+
+    const installSuccessMessage = "printf '\\nSpiderMonkey installed successfully. You can now run `js` from this terminal.\\n'";
+    const installWithHomebrewSetupCommand = 'clear;/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" && eval "$(/opt/homebrew/bin/brew shellenv)" && brew install spidermonkey && ' + installSuccessMessage;
+    const installWithExistingHomebrewCommand = 'brew install spidermonkey && ' + installSuccessMessage;
+
     exec('brew -v', (error, stdout, stderr) => {
         // console.log('error',error,'stdout',stdout,'stderr',stderr)
         if (error) {
@@ -44,7 +52,7 @@ async function setupSpiderMonkeyOnMac() {
           terminal.show(true); // Show the terminal window
   
           // Run the installation script inside the terminal
-          terminal.sendText('clear;/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" && eval "$(/opt/homebrew/bin/brew shellenv)" && brew install spidermonkey');
+          terminal.sendText(installWithHomebrewSetupCommand);
   
         //   exec('js -v', (e,s,t)=>{
             // console.log('e',e,'s',s,'t',t);
@@ -54,7 +62,7 @@ async function setupSpiderMonkeyOnMac() {
         } else {
           terminal.show(true);
           vscode.window.showInformationMessage('Homebrew is already installed! Attempting to install spidermonkey');
-          terminal.sendText('brew install spidermonkey');
+          terminal.sendText(installWithExistingHomebrewCommand);
         }
       });
 }
@@ -82,31 +90,105 @@ function downloadFile(url: string, dest: string): Promise<void> {
     });
 }
 
-function addToPath(dir: string) {
-    console.log('addToPath');
-    let p = process.env.PATH||'';
-    console.log('p',p);
-    
-    if (!p.includes(SPIDERMONKEY_PATH)) {
-        // Use PowerShell to persistently add the directory to the user PATH
-        // const command = `setx PATH "$($Env:PATH + ';${SPIDERMONKEY_PATH}')"`;
-        const command = `setx PATH '${SPIDERMONKEY_PATH};${p}'`;
-        
-        console.log('command',command)
-        exec(`powershell -Command "${command}"`, (error, stdout, stderr) => {
-            if (error) {
-                console.error(`Error: ${error.message}`);
-                return;
-            }
-            if (stderr) {
-                console.error(`Error: ${stderr}`);
-                return;
-            }
-            console.log(`Success: ${stdout}`);
-        });
-    } else {
-        console.log('Directory already exists in PATH');
+function normalizeWindowsPath(dir: string): string {
+    return path.win32.normalize(dir).replace(/[\\\/]+$/, '').toLowerCase();
+}
+
+function addToCurrentProcessPath(dir: string) {
+    const currentPath = process.env.PATH ?? '';
+    const entries = currentPath.split(path.delimiter).filter((entry) => entry.trim().length > 0);
+    const normalizedDir = normalizeWindowsPath(dir);
+    const hasEntry = entries.some((entry) => normalizeWindowsPath(entry) === normalizedDir);
+
+    if (!hasEntry) {
+        process.env.PATH = [dir, ...entries].join(path.delimiter);
     }
+}
+
+function escapePowerShellSingleQuotedString(value: string): string {
+    return value.replace(/'/g, "''");
+}
+
+function execFileAsync(command: string, args: string[]): Promise<{ stdout: string; stderr: string }> {
+    return new Promise((resolve, reject) => {
+        execFile(command, args, (error, stdout, stderr) => {
+            if (error) {
+                reject(new Error(stderr.trim() || error.message));
+                return;
+            }
+
+            resolve({ stdout, stderr });
+        });
+    });
+}
+
+async function addToPath(dir: string): Promise<boolean> {
+    if (os.platform() !== 'win32') {
+        addToCurrentProcessPath(dir);
+        return false;
+    }
+
+    addToCurrentProcessPath(dir);
+
+    const escapedDir = escapePowerShellSingleQuotedString(dir);
+    const script = `
+$ErrorActionPreference = 'Stop'
+$targetDir = '${escapedDir}'
+$userPath = [Environment]::GetEnvironmentVariable('Path', 'User')
+if ($null -eq $userPath) {
+    $userPath = ''
+}
+
+$entries = @()
+if ($userPath.Length -gt 0) {
+    $entries = $userPath -split ';' | Where-Object { $_.Trim().Length -gt 0 }
+}
+
+$seen = [System.Collections.Generic.HashSet[string]]::new([System.StringComparer]::OrdinalIgnoreCase)
+$updatedEntries = [System.Collections.Generic.List[string]]::new()
+
+foreach ($entry in @($targetDir) + $entries) {
+    $trimmedEntry = $entry.Trim()
+    if ($trimmedEntry.Length -eq 0) {
+        continue
+    }
+
+    $normalizedEntry = $trimmedEntry.TrimEnd('\\')
+    if ($seen.Add($normalizedEntry)) {
+        [void]$updatedEntries.Add($trimmedEntry)
+    }
+}
+
+$newUserPath = [string]::Join(';', $updatedEntries)
+$pathChanged = $newUserPath -ne $userPath
+
+if ($pathChanged) {
+    [Environment]::SetEnvironmentVariable('Path', $newUserPath, 'User')
+    Write-Output 'updated'
+} else {
+    Write-Output 'unchanged'
+}
+`;
+
+    const { stdout, stderr } = await execFileAsync('powershell.exe', [
+        '-NoProfile',
+        '-NonInteractive',
+        '-ExecutionPolicy',
+        'Bypass',
+        '-Command',
+        script
+    ]);
+
+    if (stderr.trim().length > 0) {
+        throw new Error(stderr.trim());
+    }
+
+    const result = stdout.trim();
+    if (result !== 'updated' && result !== 'unchanged') {
+        throw new Error(`Unexpected response while updating PATH: ${result}`);
+    }
+
+    return result === 'updated';
 }
 
 
@@ -182,8 +264,11 @@ export function activate(context: vscode.ExtensionContext) {
         }
 
         try {
-            if(os.platform() === 'win32') await winInstall();
-            else if(os.platform() === 'darwin') await macInstall();
+            if (os.platform() === 'win32') {
+                await winInstall();
+            } else if (os.platform() === 'darwin') {
+                await macInstall();
+            }
             // vscode.window.showInformationMessage('SpiderMonkey successfully installed and added to PATH!');
         } catch (error : unknown) {
             if(error instanceof Error){
@@ -204,8 +289,12 @@ export function activate(context: vscode.ExtensionContext) {
 
 async function winInstall(){
     try {
-        await setupSpiderMonkeyOnWin();
-        vscode.window.showInformationMessage('SpiderMonkey successfully installed and added to PATH!');
+        const pathWasUpdated = await setupSpiderMonkeyOnWin();
+        if (pathWasUpdated) {
+            vscode.window.showInformationMessage('SpiderMonkey installed. Your Windows user PATH was updated for future terminals; you may need to restart VS Code or open a new terminal before using `js` manually.');
+        } else {
+            vscode.window.showInformationMessage('SpiderMonkey installed. `C:\\spidermonkey` was already present in your Windows user PATH.');
+        }
     } catch (error : unknown) {
         if(error instanceof Error){
             vscode.window.showErrorMessage(`Error setting up SpiderMonkey: ${error.message}`);

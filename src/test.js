@@ -1,5 +1,3 @@
-
-
-print('hello')
-const s = readline()
-print(s)
+print('hello');
+const s = readline();
+print(s);

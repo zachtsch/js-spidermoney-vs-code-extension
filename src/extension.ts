@@ -7,7 +7,8 @@ import { exec, execFile } from 'child_process';
 import AdmZip from 'adm-zip';
 
 const SPIDERMONKEY_PATH = 'C:\\spidermonkey';
-const SPIDERMONKEY_URL = 'https://archive.mozilla.org/pub/firefox/nightly/latest-mozilla-central/jsshell-win64.zip';
+const SPIDERMONKEY_URL = 'https://download-origin.cdn.mozilla.net/pub/firefox/releases/128.14.0esr/jsshell/jsshell-win64.zip';
+// const SPIDERMONKEY_URL = 'https://archive.mozilla.org/pub/firefox/nightly/latest-mozilla-central/jsshell-win64.zip';
 
 
 async function setupSpiderMonkeyOnWin(): Promise<boolean> {

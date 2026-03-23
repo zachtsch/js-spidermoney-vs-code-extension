@@ -40,7 +40,9 @@ async function setupSpiderMonkeyOnMac() {
         terminal = vscode.window.createTerminal('Homebrew Installation');
     }
 
-    const installSuccessMessage = "printf '\\nSpiderMonkey installed successfully. You can now run `js` from this terminal.\\n'";
+    
+    // const installSuccessMessage = "printf '\\nSpiderMonkey installed successfully. You can now run `js` from this terminal.\\n'";
+    const installSuccessMessage = "printf '\\nSpiderMonkey installed successfully. You can now run `js` from this terminal. If it is not recognized, try restarting your terminal or VS Code.\\n'";
     const installWithHomebrewSetupCommand = 'clear;/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" && eval "$(/opt/homebrew/bin/brew shellenv)" && brew install spidermonkey && ' + installSuccessMessage;
     const installWithExistingHomebrewCommand = 'brew install spidermonkey && ' + installSuccessMessage;
 

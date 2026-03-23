@@ -90,6 +90,11 @@
     },
     "dependencies": {
         "adm-zip": "^0.5.16",
-        "fs-extra": "^11.2.0"
-    }
+        "fs-extra": "^11.2.0",
+        "minimatch": "^10.2.4",
+        "serialize-javascript": "^7.0.4"
+    },
+    "overrides": {
+        "serialize-javascript": "^7.0.4"
+    } 
 }

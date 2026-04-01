@@ -5,7 +5,7 @@
       "{",
       "  \"compilerOptions\": {",
       "    \"target\": \"esnext\",",
-      "    \"module\": \"none\",",
+      "    \"module\": \"esnext\",",
       "    \"inlineSourceMap\": true,",
       "    \"inlineSources\": true,",
       "    \"strict\": true,",

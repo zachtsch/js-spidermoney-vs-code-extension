@@ -13,6 +13,7 @@
       "  align-items: center;",
       "  justify-content: center;",
       "  overflow: hidden;",
+      "  /* flex-direction: column; */",
       "}"
     ],
     "description": "Full-height page with centered flex container"

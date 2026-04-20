@@ -1,15 +1,16 @@
 # javascript--spidermonkey--run-button README
 
-This is a simple extension that adds a play/run button to the top right of the editor window for `.js` and `.ts` files. When you click the button, the current file is run in the terminal using the `js` or `ts-node` command. This is useful for running TypeScript/JavaScript files in the terminal.
+This is a simple extension that adds a play/run button to the top right of the editor window for `.js` and `.ts` files. When you click the button, the current file is run in the terminal using the `js` or `tsx` command. This is useful for running TypeScript/JavaScript files in the terminal.
 
 Javascript files (`.js`) files will be run using Spidermonkey.  Spidermonkey is FireFox's JavaScript engine.
 
-TypeScript files (`.ts`) are also supported and will be run using `ts-node`.  You can install both TypeScript and ts-node with the following command:
+TypeScript files (`.ts`) are also supported and will be run using `tsx`.  You can install both TypeScript and tsx with the following command:
 
-npm i -g typescript ts-node
+npm i -g typescript tsx
 
 ## Requirements
-This extension requires the SpiderMonkey JavaScript engine to be installed on your system and on the path. A command 'Install and Setup Spidermonkey' is provided in the command palette to help you install SpiderMonkey.
+For TypeScript, this extension requires TypeScript and tsx to be installed globally.
+For JavaScript, this extension requires the SpiderMonkey JavaScript engine to be installed on your system and on the path. A command 'Install and Setup Spidermonkey' is provided in the command palette to help you install SpiderMonkey.
 
 # github
 https://github.com/zachtsch/js-spidermoney-vs-code-extension

@@ -228,7 +228,7 @@ export function activate(context: vscode.ExtensionContext) {
         }
     });
 
-    let disposable2 = vscode.commands.registerCommand('javascript--spidermonkey--run-button.tsnode', async () => {
+    let disposable2 = vscode.commands.registerCommand('javascript--spidermonkey--run-button.tsx', async () => {
         // Get the active text editor
         const editor = vscode.window.activeTextEditor;
 
@@ -248,12 +248,12 @@ export function activate(context: vscode.ExtensionContext) {
                 terminal = vscode.window.createTerminal(`Run: ${filePath}`);
                 terminal.show();
                 //setTimeout(() => {
-                terminal!.sendText(`clear\r\nts-node "${filePath}"`);  // Assuming 'js' is the command for running SpiderMonkey
-                // terminal!.sendText(`ts-node "${filePath}"`);  // Assuming 'js' is the command for running SpiderMonkey
+                terminal!.sendText(`clear\r\ntsx "${filePath}"`);  // Assuming 'tsx' is the command for running TypeScript
+                // terminal!.sendText(`tsx "${filePath}"`);  // Assuming 'tsx' is the command for running TypeScript
                 //}, 500);  // Delay in milliseconds (adjust if needed)
             }else{
                 terminal.show();;
-                terminal.sendText(`ts-node "${filePath}"`);  // For example, if you are running *.js files
+                terminal.sendText(`tsx "${filePath}"`);  // For example, if you are running *.ts files
             }
         }
     });

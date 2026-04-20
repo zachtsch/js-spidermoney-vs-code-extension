@@ -7,3 +7,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## [Unreleased]
 
 - Initial release
+
+## [0.1.39]
+
+- Switched TypeScript runner from `ts-node` to `tsx`. Install with `npm i -g typescript tsx` (the global `ts-node` install is no longer required).

@@ -9,7 +9,7 @@ TypeScript files (`.ts`) are also supported and will be run using `tsx`.  You ca
 npm i -g typescript tsx
 
 ## Requirements
-For TypeScript, this extension requires TypeScript and tsx to be installed globally.
+For TypeScript, this extension requires Node.js, TypeScript, and tsx to be installed globally.
 For JavaScript, this extension requires the SpiderMonkey JavaScript engine to be installed on your system and on the path. A command 'Install and Setup Spidermonkey' is provided in the command palette to help you install SpiderMonkey.
 
 # github

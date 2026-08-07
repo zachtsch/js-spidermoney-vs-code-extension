@@ -25,7 +25,7 @@ This command will install SpiderMonkey on your system and add it to your path.  
 ## Windows
 Downloads jsshell-win64.zip from https://archive.mozilla.org/pub/firefox/nightly/latest-mozilla-central/ and unzips it in `C:\spidermonkey`. Then it updates your **user** `Path` so future terminals can find `js`. Finally it removes the `.zip` file.
 
-If you already had VS Code or a terminal open, you may need to open a new terminal or restart VS Code before `js` is available as a plain command there.
+If you already had VS Code or a terminal open, you may need to open a new terminal or restart VS Code before `js` is available as a plain command there.  You may even need to restart Windows.
 
 ## Mac
 Installs Homebrew, adds `brew` to your path and then runs `brew install spidermonkey`.  Requires your password.  Leaves Homebrew installed.

@@ -16,6 +16,8 @@ const SPIDERMONKEY_SHA256 = 'd1f168030e4e052cbfb175eaa89f78157dd9428973158f43ef9
 
 async function setupSpiderMonkeyOnWin(): Promise<boolean> {
     const zipFilePath = path.join(os.tmpdir(), 'spidermonkey.zip');
+    let pathWasUpdated: boolean;
+
     try {
         await downloadFile(SPIDERMONKEY_URL, zipFilePath);
 
@@ -32,10 +34,18 @@ async function setupSpiderMonkeyOnWin(): Promise<boolean> {
         const zip = new AdmZip(zipFilePath);
         zip.extractAllTo(SPIDERMONKEY_PATH, true);
 
-        return await addToPath(SPIDERMONKEY_PATH);
-    } finally {
-        await fs.remove(zipFilePath);
+        pathWasUpdated = await addToPath(SPIDERMONKEY_PATH);
+    } catch (error) {
+        try {
+            await fs.remove(zipFilePath);
+        } catch (cleanupError) {
+            console.error('Failed to remove the temporary SpiderMonkey download after installation failed.', cleanupError);
+        }
+        throw error;
     }
+
+    await fs.remove(zipFilePath);
+    return pathWasUpdated;
 }
 
 async function setupSpiderMonkeyOnMac() {
@@ -85,7 +95,10 @@ async function downloadFile(url: string, dest: string): Promise<void> {
 
     if (response.statusCode !== 200) {
         response.resume();
-        throw new Error(`Failed to download file: ${response.statusCode}`);
+        const status = response.statusCode === undefined
+            ? 'unknown status'
+            : `${response.statusCode}${response.statusMessage ? ` ${response.statusMessage}` : ''}`;
+        throw new Error(`Failed to download ${url}: HTTP ${status}`);
     }
 
     await pipeline(response, fs.createWriteStream(dest));

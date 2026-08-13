@@ -3,34 +3,39 @@ import * as https from 'https';
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import * as os from 'os';
+import { createHash } from 'crypto';
 import { exec, execFile } from 'child_process';
+import type { IncomingMessage } from 'http';
+import { pipeline } from 'stream/promises';
 import AdmZip from 'adm-zip';
 
 const SPIDERMONKEY_PATH = 'C:\\spidermonkey';
-const SPIDERMONKEY_URL = 'https://download-origin.cdn.mozilla.net/pub/firefox/releases/128.14.0esr/jsshell/jsshell-win64.zip';
+const SPIDERMONKEY_URL = 'https://download-origin.cdn.mozilla.net/pub/firefox/releases/140.13.0esr/jsshell/jsshell-win64.zip';
+const SPIDERMONKEY_SHA256 = 'd1f168030e4e052cbfb175eaa89f78157dd9428973158f43ef9bd3179e6379f6';
 
 
 async function setupSpiderMonkeyOnWin(): Promise<boolean> {
-    // Step 1: Download the ZIP file
     const zipFilePath = path.join(os.tmpdir(), 'spidermonkey.zip');
-    await downloadFile(SPIDERMONKEY_URL, zipFilePath);
+    try {
+        await downloadFile(SPIDERMONKEY_URL, zipFilePath);
 
-    // Step 2: Extract the ZIP file
-    if (fs.existsSync(SPIDERMONKEY_PATH)) {
-        await fs.remove(SPIDERMONKEY_PATH);
+        const actualSha256 = await calculateSha256(zipFilePath);
+        if (actualSha256 !== SPIDERMONKEY_SHA256) {
+            throw new Error(`SpiderMonkey download failed SHA-256 verification. Expected ${SPIDERMONKEY_SHA256}, received ${actualSha256}.`);
+        }
+
+        if (fs.existsSync(SPIDERMONKEY_PATH)) {
+            await fs.remove(SPIDERMONKEY_PATH);
+        }
+        await fs.ensureDir(SPIDERMONKEY_PATH);
+
+        const zip = new AdmZip(zipFilePath);
+        zip.extractAllTo(SPIDERMONKEY_PATH, true);
+
+        return await addToPath(SPIDERMONKEY_PATH);
+    } finally {
+        await fs.remove(zipFilePath);
     }
-    await fs.ensureDir(SPIDERMONKEY_PATH);
-
-    const zip = new AdmZip(zipFilePath);
-    zip.extractAllTo(SPIDERMONKEY_PATH, true);
-
-    // Step 3: Add to Windows PATH
-    const pathWasUpdated = await addToPath(SPIDERMONKEY_PATH);
-
-    // Clean up downloaded zip file
-    await fs.remove(zipFilePath);
-
-    return pathWasUpdated;
 }
 
 async function setupSpiderMonkeyOnMac() {
@@ -73,22 +78,27 @@ async function setupSpiderMonkeyOnMac() {
 
 
 
-function downloadFile(url: string, dest: string): Promise<void> {
+async function downloadFile(url: string, dest: string): Promise<void> {
+    const response = await new Promise<IncomingMessage>((resolve, reject) => {
+        https.get(url, resolve).on('error', reject);
+    });
+
+    if (response.statusCode !== 200) {
+        response.resume();
+        throw new Error(`Failed to download file: ${response.statusCode}`);
+    }
+
+    await pipeline(response, fs.createWriteStream(dest));
+}
+
+function calculateSha256(filePath: string): Promise<string> {
     return new Promise((resolve, reject) => {
-        const file = fs.createWriteStream(dest);
-        https.get(url, (response) => {
-            if (response.statusCode !== 200) {
-                return reject(new Error(`Failed to download file: ${response.statusCode}`));
-            }
+        const hash = createHash('sha256');
+        const stream = fs.createReadStream(filePath);
 
-            response.pipe(file);
-
-            file.on('finish', () => {
-                file.close(resolve as any);
-            });
-        }).on('error', (err) => {
-            fs.unlink(dest, () => reject(err));
-        });
+        stream.on('error', reject);
+        stream.on('data', (chunk) => hash.update(chunk));
+        stream.on('end', () => resolve(hash.digest('hex')));
     });
 }
 

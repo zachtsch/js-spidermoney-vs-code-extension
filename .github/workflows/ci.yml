@@ -44,3 +44,13 @@ jobs:
 
       - name: Run extension tests
         run: xvfb-run -a npm exec -- vscode-test
+
+      - name: Package VSIX
+        run: npm run package:vsix -- --out extension.vsix
+
+      - name: Upload VSIX
+        uses: actions/upload-artifact@v4
+        with:
+          name: extension-${{ github.sha }}
+          path: extension.vsix
+          if-no-files-found: error

@@ -23,7 +23,7 @@ https://github.com/zachtsch/js-spidermoney-vs-code-extension
 This command will install SpiderMonkey on your system and add it to your path.  It behaves differently depending on your operating system.
 
 ## Windows
-Downloads jsshell-win64.zip from https://archive.mozilla.org/pub/firefox/nightly/latest-mozilla-central/ and unzips it in `C:\spidermonkey`. Then it updates your **user** `Path` so future terminals can find `js`. Finally it removes the `.zip` file.
+Downloads the latest SpiderMonkey jsshell-win64.zip from https://archive.mozilla.org/pub/firefox/releases/ and unzips it in `C:\spidermonkey`. Then it updates your **user** `Path` so future terminals can find `js`. Finally it removes the `.zip` file.
 
 If you already had VS Code or a terminal open, you may need to open a new terminal or restart VS Code before `js` is available as a plain command there.  You may even need to restart Windows.
 

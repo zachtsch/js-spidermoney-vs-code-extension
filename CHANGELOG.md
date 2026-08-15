@@ -6,7 +6,13 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
-- Initial release
+## [0.1.44] - 2026-08-13
+
+- Updated the Windows SpiderMonkey installer to Firefox 140.13.0 ESR.
+- Added SHA-256 verification for the downloaded Windows SpiderMonkey archive.
+- Added CI, Dependabot updates, VSIX artifacts, and tag-based Marketplace publishing.
+- Updated vulnerable dependencies and current VS Code extension test tooling.
+- Corrected the Windows installation documentation.
 
 ## [0.1.39]
 

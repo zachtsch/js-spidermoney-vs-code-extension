@@ -30,8 +30,11 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Audit production and development dependencies
-        run: npm audit --audit-level=high
+      - name: Audit production dependencies
+        # Only production dependencies are bundled into dist/extension.js and
+        # shipped to users, so only those block a merge. Development
+        # dependencies are covered by the scheduled dependency-audit workflow.
+        run: npm audit --audit-level=high --omit=dev
 
       - name: Lint
         run: npm run lint

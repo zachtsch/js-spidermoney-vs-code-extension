@@ -1,0 +1,66 @@
+name: Dependency audit
+
+# Full audit including development dependencies. The CI and publish gates only
+# audit production dependencies, since those are the only ones bundled into
+# dist/extension.js and shipped to users. This job covers the rest and reports
+# findings as an issue rather than blocking merges.
+
+on:
+  schedule:
+    - cron: "0 9 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  audit:
+    name: audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Audit production and development dependencies
+        id: audit
+        run: |
+          if npm audit --audit-level=high > audit-report.txt 2>&1; then
+            echo "vulnerable=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "vulnerable=true" >> "$GITHUB_OUTPUT"
+          fi
+          cat audit-report.txt
+
+      - name: Report findings
+        if: steps.audit.outputs.vulnerable == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TITLE: "Dependency audit: high severity advisories found"
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          # npm audit output can be long, so cap what gets posted.
+          report="$(head -c 40000 audit-report.txt)"
+
+          body="$(printf '%s\n\n```\n%s\n```\n\n[Full run](%s)\n' \
+            "\`npm audit --audit-level=high\` reported high severity advisories, including development dependencies. These do not block merges, because only production dependencies are bundled into the published extension. Run \`npm audit fix\` to address them." \
+            "$report" "$RUN_URL")"
+
+          existing="$(gh issue list --state open --search "$TITLE in:title" --json number --jq '.[0].number')"
+
+          if [ -n "$existing" ]; then
+            gh issue comment "$existing" --body "$body"
+          else
+            gh issue create --title "$TITLE" --body "$body"
+          fi

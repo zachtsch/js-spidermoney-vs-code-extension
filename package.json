@@ -91,7 +91,7 @@
         "webpack-cli": "^5.1.4"
     },
     "dependencies": {
-        "adm-zip": "^0.6.0",
+        "adm-zip": "^0.6.1",
         "fs-extra": "^11.4.0",
         "minimatch": "^10.2.4",
         "serialize-javascript": "^7.0.4"

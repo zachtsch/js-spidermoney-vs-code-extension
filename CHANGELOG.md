@@ -6,6 +6,8 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
+## [0.1.45] - 2026-09-19
+
 - Added a `prettier` JSONC snippet that scaffolds a `settings.json` with format-on-save using the Prettier extension.
 
 ## [0.1.44] - 2026-08-13

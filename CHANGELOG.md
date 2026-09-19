@@ -6,6 +6,8 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
+- Added a `prettier` JSONC snippet that scaffolds a `settings.json` with format-on-save using the Prettier extension.
+
 ## [0.1.44] - 2026-08-13
 
 - Updated the Windows SpiderMonkey installer to Firefox 140.13.0 ESR.

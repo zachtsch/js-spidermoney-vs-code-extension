@@ -6,6 +6,11 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
+## [0.1.45] - 2026-09-19
+
+- Added a `prettier` JSONC snippet that scaffolds a `settings.json` with format-on-save using the Prettier extension.
+- Updated `adm-zip` to 0.6.1 to resolve high severity symlink extraction and memory allocation advisories.
+
 ## [0.1.44] - 2026-08-13
 
 - Updated the Windows SpiderMonkey installer to Firefox 140.13.0 ESR.

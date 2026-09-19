@@ -16,5 +16,16 @@
       ""
     ],
     "description": "Barebones tsconfig.json for HTML"
+  },
+  "Format on save with Prettier": {
+    "prefix": ["prettier", "formatonsave"],
+    "body": [
+      "{",
+      "  \"editor.formatOnSave\": true,",
+      "  \"editor.defaultFormatter\": \"esbenp.prettier-vscode\"",
+      "}",
+      ""
+    ],
+    "description": "settings.json that formats on save using the Prettier extension"
   }
 }

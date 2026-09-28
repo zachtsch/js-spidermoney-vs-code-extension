@@ -92,7 +92,7 @@
     },
     "dependencies": {
         "adm-zip": "^0.6.1",
-        "fs-extra": "^11.4.0",
+        "fs-extra": "^11.4.1",
         "minimatch": "^10.2.4",
         "serialize-javascript": "^7.0.4"
     },
